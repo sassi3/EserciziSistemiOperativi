@@ -467,5 +467,23 @@
       "",
       "$0"
     ]
+  },
+  "t-signal":{
+    "prefix":"t-signal",
+    "description": "signal handle",
+    "body":[
+      "signal($1,$2) /* IAggancio il segnale $1 con la funzione $2 */",
+      "$0"
+    ] 
+  },
+  "t-handler":{
+    "prefix":"t-handler",
+    "description":"signal handle",
+    "body":[
+      "void handler(int signo){",
+      "\tprintf(\"Il processo (pid = %d) ha ricevuto il segnale %d\",getpid(),signo);",
+      "}",
+      "$0"
+    ]
   }
 }
