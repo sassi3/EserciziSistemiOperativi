@@ -12,6 +12,7 @@
       "#include <ctype.h>",
       "#include <signal.h>",
       "#include <stdbool.h>",
+      "#include <sys/types.h>",
       "",
       "$0"
     ]
@@ -473,7 +474,7 @@
     "description": "signal",
     "body":[
       "/* Installo l'handler $2 per gestire il segnale $1 */",
-      "signal($1, $2)",
+      "signal($1, $2);",
       "$0"
     ] 
   },
@@ -484,7 +485,8 @@
       "/* Definisco un handler */",
       "void handler(int signo)",
       "{",
-      "\tprintf(\"Il processo %d ha ricevuto il segnale %d\", getpid(), signo);",
+      "\tprintf(\"DEBUG-Il processo %d ha ricevuto il segnale %d.\\n\", getpid(), signo);",
+      "${1:exit(signo);}",
       "}",
       "",
       "$0"
