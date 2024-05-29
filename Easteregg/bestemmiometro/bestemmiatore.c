@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     int random;
 
     int status;  /* variabile di stato per la wait */
-    //int ritorno; /* variabile usata dal padre per recuperare valore di ritorno di ogni figlio */
+    int ritorno; /* variabile usata dal padre per recuperare valore di ritorno di ogni figlio */
     char *endpointer;
     pipe_t pipedFP;
     int fd;
@@ -92,8 +92,6 @@ int main(int argc, char *argv[])
             printf("Dio can, bestemmiolista non raggingibile\n");
             exit(-1);
         }
-        //printf("bestemmiolista aperta %d\n", fd);
-
         execlp("wc", "wc", "-l", (char *)0);
 
         exit(0);
@@ -103,7 +101,7 @@ int main(int argc, char *argv[])
     close(contabestemmie[1]);
     read(contabestemmie[0], totBestemmieStringa, sizeof(totBestemmieStringa));
     totBestemmie = atoi(totBestemmieStringa);
-    //printf("totale bestemmie nella bestemmiolista: %d\n", totBestemmie);
+    printf("totale bestemmie nella bestemmiolista: %d\n", totBestemmie);
 
     /* Aspetto il figlio */
     int pidFiglio;
@@ -118,8 +116,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        /*ritorno = (int)((status >> 8) & 0xFF);
-         printf("Il processo contabestemmie %d ha ritornato %d.\n", pidFiglio, ritorno);*/
+        ritorno = (int)((status >> 8) & 0xFF);
+        printf("Il processo contabestemmie %d e' terminato con successo, ha ritornato %d.\n", pidFiglio, ritorno);
     }
 
     if ((pid = fork()) < 0)
@@ -140,6 +138,7 @@ int main(int argc, char *argv[])
         close(pipedFP[0]);
         /* Lettura di ciascun carattere del file linea del file */
         int j = 0;
+        int counter;
         while (read(fd, &(bestemmia[j]), 1) != 0)
         {
             /* Trovato il termine di una linea */
@@ -149,6 +148,7 @@ int main(int argc, char *argv[])
                 j++;
                 write(pipedFP[1], &j, sizeof(j));
                 write(pipedFP[1], bestemmia, j);
+                counter++;
                 j = 0;
             }
             else
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
                 j++;
             }
         }
-        exit(0);
+        exit(counter);
     }
 
     close(pipedFP[1]);
@@ -182,8 +182,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        /*ritorno = (int)((status >> 8) & 0xFF);
-        printf("Il processo bestemmiatore %d ha ritornato %d.\n", pidFiglio, ritorno);*/
+        ritorno = (int)((status >> 8) & 0xFF);
+        printf("Il processo bestemmiatore %d e' terminato con successo ,ha ritornato %d.\n", pidFiglio, ritorno);
     }
 
     for (i = 0; i < N; ++i)
