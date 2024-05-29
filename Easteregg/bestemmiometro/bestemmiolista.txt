@@ -1,6 +1,7 @@
 Dio maiale
 Dio porco
 Dio schifoso
+Dio negro
 Dio bastardo
 Dio odioso
 Dio mega bestia
@@ -22,6 +23,7 @@ Dio melnet
 Dio merda
 Dio merdone
 Dio porcone
+Dio non abbastanza furbo
 Dio babbuino
 Dio ladro
 Dio infame
@@ -55,6 +57,7 @@ Madonna cagna
 Madonna odiosa
 Madonna laida
 Madonna porca
+Madonna Ventasso
 Madonna T-SHELL
 Madonna malandrina
 Venisse un canchero al Cristo
@@ -62,10 +65,13 @@ Cristo morto
 Cristo sbura
 Cristo infinitamente bastardo
 Cristo black and decker
-Gesù poco abile
 Cristo velociraptor
 Gesù esperto
+Gesù poco abile
 Gesù cane
+Gesù birillo
+Gesù opossum
+Gesù merdone
 Gesualdo Cristoinculo
 Gesù bruciato
 Gesù smargiasso
