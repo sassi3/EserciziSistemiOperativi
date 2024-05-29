@@ -470,19 +470,23 @@
   },
   "t-signal":{
     "prefix":"t-signal",
-    "description": "signal handle",
+    "description": "signal",
     "body":[
-      "signal($1,$2) /* IAggancio il segnale $1 con la funzione $2 */",
+      "/* Installo l'handler $2 per gestire il segnale $1 */",
+      "signal($1, $2)",
       "$0"
     ] 
   },
   "t-handler":{
     "prefix":"t-handler",
-    "description":"signal handle",
+    "description":"handler",
     "body":[
-      "void handler(int signo){",
-      "\tprintf(\"Il processo (pid = %d) ha ricevuto il segnale %d\",getpid(),signo);",
+      "/* Definisco un handler */",
+      "void handler(int signo)",
+      "{",
+      "\tprintf(\"Il processo %d ha ricevuto il segnale %d\", getpid(), signo);",
       "}",
+      "",
       "$0"
     ]
   }
