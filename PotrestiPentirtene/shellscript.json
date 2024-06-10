@@ -127,9 +127,9 @@
 		"prefix": "file ext",
 		"body": [
 			"# Controllo se il file ha estensione \\$2",
-    		"case \\$F in",
+    		"case \\$${1:F} in",
     		"*.$2)",
-    		    "\techo \"Il file `pwd`/\\$F ha estensione \\$2.\"",
+    		    "\techo \"Il file `pwd`/\\$${1:F} ha estensione $2.\"",
     		    "\techo \"`pwd`/\\$F\" >> \"\\$3\";;",
     		"*)",
     		    "\t;;",
@@ -141,9 +141,7 @@
 		"body": [
 			"# Mi assicuro che la directory non sia vuota",
 			"if test -z \"`ls -A`\"; then",
-			    "\techo \"La directory \\$1 e' vuota. Directory scartata.\"",
-			    "\t# Esco con valore 0 perché cio' non e' un errore",
-			    "\texit 0",
+			    "\techo \"DUBUG- La directory $1 e' vuota. Directory scartata.\"",
 			"fi",
 			"$0"
 		]
@@ -279,7 +277,7 @@
 			"for D in *; do",
 				"\tif test -d \"\\$D\" -a -x \"\\$D\"; then",
 					"\t\t# Chiamo lo script ricorsivo entrando nella directory",
-					"\t\tFCR.sh \"\\$1/\\$D\" \"\\$2\" \"\\$3\"",
+					"\t\tFCR.sh \"\\`pwd`/\\$D\" \"\\$2\" \"\\$3\"",
 				"\tfi",
 			"done"
 		]
@@ -288,9 +286,9 @@
 		"prefix": "for hierarchy",
 		"body": [
 			"# Scorro la lista di gerarchie",
-			"for G in \\$Q; do",
+			"for ${1:G} in \\$${2:Q}; do",
 			    "\t# Chiamo lo script ricorsivo",
-			    "\tFCR.sh \"\\$G\" \"\\$\" \"${1:/tmp/nomiAssoluti}\"",
+			    "\tFCR.sh \"\\$G\" \"\\$$3\" \"${1:/tmp/nomiAssoluti}\"",
 			"done"
 		]
 	}
