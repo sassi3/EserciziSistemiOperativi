@@ -11,7 +11,7 @@
 			"# Controllo che il numero di parametri rientri nella soglia desiderata",
 			"if test \\$# -lt $1; then",
 				"\t# In tal caso il numero dei parametri non rientra nell'intervallo desiderato, quindi interrompo l'esecuzione",
-				"\techo \"Errore: numero parametri errato. Il corretto numero di parametri da passare e' $1.\"",
+				"\techo \"Errore: numero parametri errato. Il corretto numero di parametri da passare e' almeno $1.\"",
 				"\t# Esco specificando un valore intero di errore",
 				"\texit 1;",
 				"$0",
@@ -78,18 +78,18 @@
 	"controllo carattere": {
 		"prefix": "check char",
 		"body": [
-		"# Verifico che il parametro \\$1 sia un carattere",
-		"case \\$1 in",
-			"\t[a-z,A-Z])",
-				"\t\techo \"Il primo parametro \\$1 e' un carattere.\";;",
-			"\t*)",
-				"\t\techo \"Il primo parametro \\$1 non e' un carattere. Processo interrotto.\"",
-				"\t\t# Esco specificando un valore intero di errore",
-				"\t\texit 2;;",
-		"esac"]
+			"case \\$${1:i} in",
+			"?)", 
+				"\techo \"DEBUG-$i e' un carattere\" ;;",
+			"*)", 
+				"\techo \"Errore: \\$${1:i} non e' un carattere\"",
+				"\texit $2;;",
+			"esac",
+			"$0"
+			]
 	},
 	"controllo path assoluto": {
-		"prefix": "abs path",
+		"prefix": "check abs path",
 		"body": [
 			"# Uso un case per verificare se il parametro e' un path assoluto",
 			"case \\$${1:G} in",
@@ -107,7 +107,7 @@
 			    "\techo \"Errore: il parametro \\$${1:G} non e' un path assoluto.\"",
 			    "\t# Esco specificando un valore intero di errore",
 			    "\texit $3;;",
-			"\tesac",
+			"esac",
 			"$0"
 		]
 	},
@@ -117,10 +117,9 @@
 			"for ${1:F} in *; do",
 			"\t#Seleziono solo i file leggibili",
 			"\tif test -f \"\\$${1:F}\" -a -r \"\\$${1:F}\"; then",
-    		    "\t\t",
+    		    "\t\t$0",
     		"\tfi",
-			"done",
-			"$0"
+			"done"
 		]
 	},
 	"controllo estensione del file": {
@@ -139,7 +138,7 @@
 	"controllo directory vuota": {
 		"prefix": "dir empty",
 		"body": [
-			"# Mi assicuro che la directory non sia vuota",
+			"# Controllo che la directory corrente non sia vuota",
 			"if test -z \"`ls -A`\"; then",
 			    "\techo \"DUBUG- La directory $1 e' vuota. Directory scartata.\"",
 			"fi",
@@ -236,15 +235,15 @@
 			"esac"
 		]
 	},
-	"for": {
-		"prefix": "for con iteratore",
+	"for con iteratore": {
+		"prefix": "for",
 		"body": [
 			"# Dichiaro una variabile da usare come contatore",
 			"n=1",
 			"# Scorro la lista in un ciclo che utilizza il contatore n",
 			"for ${1:i}; do",
 			    "\t# Incremento la variabile contatore di 1 a ogni iterazione",
-				"$0",
+				"\t$0",
 			    "\tn=`expr \"\\$n\" + 1`",
 			"done"
 		]
@@ -277,7 +276,7 @@
 			"for D in *; do",
 				"\tif test -d \"\\$D\" -a -x \"\\$D\"; then",
 					"\t\t# Chiamo lo script ricorsivo entrando nella directory",
-					"\t\tFCR.sh \"\\`pwd`/\\$D\" \"\\$2\" \"\\$3\"",
+					"\t\tFCR.sh \"`pwd`/\\$D\" \"\\$2\" \"\\$3\"",
 				"\tfi",
 			"done"
 		]
@@ -288,7 +287,7 @@
 			"# Scorro la lista di gerarchie",
 			"for ${1:G} in \\$${2:Q}; do",
 			    "\t# Chiamo lo script ricorsivo",
-			    "\tFCR.sh \"\\$G\" \"\\$$3\" \"${1:/tmp/nomiAssoluti}\"",
+			    "\tFCR.sh \"\\$G\" \"\\$$3\" \"${4:/tmp/nomiAssoluti}\"",
 			"done"
 		]
 	}
