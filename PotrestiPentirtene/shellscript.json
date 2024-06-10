@@ -9,22 +9,24 @@
 			"prefix": "check params loose",
 			"body": [
 			"# Controllo che il numero di parametri rientri nella soglia desiderata",
-			"if test \\$# -lt 3; then",
-				"\t# In tal caso il numero dei parametri non riesntra nell'intervallo desiderato, quindi interrompo l'esecuzione",
-				"\techo \"Numero parametri errato. Processo interrotto.\"",
+			"if test \\$# -lt $1; then",
+				"\t# In tal caso il numero dei parametri non rientra nell'intervallo desiderato, quindi interrompo l'esecuzione",
+				"\techo \"Errore: numero parametri errato. Il corretto numero di parametri da passare e' $1.\"",
 				"\t# Esco specificando un valore intero di errore",
 				"\texit 1;",
+				"$0",
 			"fi"]
 	},
 	"controllo parametri stretto": {
 		"prefix": "check params strict",
 		"body": [
 		"# Controllo che il numero di parametri rientri nella soglia desiderata",
-		"if test \\$# -ne 3; then",
-			"\t# In tal caso il numero dei parametri non riesntra nell'intervallo desiderato, quindi interrompo l'esecuzione",
-			"\techo \"Numero parametri errato. Processo interrotto.\"",
+		"if test \\$# -ne $1; then",
+			"\t# In tal caso il numero dei parametri non rientra nell'intervallo desiderato, quindi interrompo l'esecuzione",
+			"\techo \"Errore: numero parametri errato. Il corretto numero di parametri da passare e' $1.\"",
 			"\t# Esco specificando un valore intero di errore",
 			"\texit 1;",
+			"$0",
 		"fi"]
 	},
 	"aggiornamento path": {
@@ -33,27 +35,29 @@
 			"# Aggiungo alla variabile d'ambiente PATH il path corrente",
 			"PATH=`pwd`:\\$PATH",
 			"# Aggiungo le modifiche effettuate alla variabile d'ambiente esportandola",
-			"export PATH"]
+			"export PATH",
+			"$0"
+		]
 	},
 	"controllo numero intero positivo": {
 		"prefix": "check int pos",
 		"body": [
 		"# Controllo se il parametro e' un numero intero",
-		"case \\$i in",
+		"case \\$${1:i} in",
 		"*[!0-9]*)",
 			"\t# In tal caso il parametro non e' un numero intero, quindi interrompo l'esecuzione",
-			"\techo \"Il parametro $i non e' un numero intero. Processo interrotto.\"",
+			"\techo \"Errore: il parametro $${1:i} non e' un numero intero. Processo interrotto.\"",
 			"\t# Esco specificando un valore intero di errore",
-			"\texit 5;;",
+			"\texit ${2:5};;",
 		"*)",
-			"\techo \"Il parametro \\$i e' un numero intero.\"",
+			"\techo \"DEBUG- Il parametro passato \\$${1:i} e' un numero intero.\"",
 			"\t# Controllo se il numero e' positivo",
-			"\tif test \"\\$i\" -le 0; then",
-				"\t\techo \"Il numero \\$i non e' positivo.\"",
+			"\tif test \"\\$${1:i}\" -le 0; then",
+				"\t\techo \"Errore: il numero passato \\$${1:i} non e' positivo.\"",
 				"\t\t# Esco specificando un valore intero di errore",
-				"\t\texit 6",
+				"\t\texit ${3:6}",
 			"\telse",
-				"\t\techo \"Il numero \\$i e' positivo.\"",
+				"\t\techo \"DEBUG- Il numero \\$${1:i} e' intero e positivo.\"",
 			"\tfi;;",
 		"esac"
 		]
@@ -87,41 +91,36 @@
 	"controllo path assoluto": {
 		"prefix": "abs path",
 		"body": [
-			"# Dichiaro una variabile lista per i path assoluti",
-			"Q=",
-			"",
-			"# Scorro i parametri",
-			"for G; do",
-			"\t# Uso un case per verificare se il parametro e' un path assoluto",
-			"\tcase \\$G in",
-			"\t/*)",
-			    "\t\techo \"Il parametro \\$G e' un path assoluto.\"",
-			    "\t\t# Ora verifico l'esistenza della directory e che essa sia traversabile",
-			    "\t\tif test -d \"\\$G\" -a -x \"\\$G\"; then",
-			        "\t\t\techo \"Il parametro \\$G e' una directory traversabile.\"",
-					"\t\t\t# Aggiorno la lista dei path assoluti",
-					"\t\t\tQ=\"\\$Q \\$G\"",
-			    "\t\telse",
-			        "\t\t\techo \"Il parametro \\$G non e' una directory traversabile. Processo interrotto.\"",
-			        "\t\t\t# Esco specificando un valore intero di errore",
-			        "\t\t\texit 3",
-			    "\t\tfi;;",
-			"\t*)",
-			    "\t\techo \"Il parametro \\$G non e' un path assoluto. Processo interrotto.\"",
-			    "\t\t# Esco specificando un valore intero di errore",
-			    "\t\texit 2;;",
+			"# Uso un case per verificare se il parametro e' un path assoluto",
+			"case \\$${1:G} in",
+			"/*)",
+			    "\techo \"DEBUG- Il parametro \\$${1:G} e' un path assoluto.\"",
+			    "\t# Ora verifico l'esistenza della directory e che essa sia traversabile",
+			    "\tif test -d \"\\$${1:G}\" -a -x \"\\$${1:G}\"; then",
+			        "\t\techo \"DEBUG- Il parametro \\$${1:G} e' una directory traversabile.\"",
+			    "\telse",
+			        "\t\techo \"Errore: il parametro \\$${1:G} non e' una directory traversabile.\"",
+			        "\t\t# Esco specificando un valore intero di errore",
+			        "\t\texit $2",
+			    "\tfi;;",
+			"*)",
+			    "\techo \"Errore: il parametro \\$${1:G} non e' un path assoluto.\"",
+			    "\t# Esco specificando un valore intero di errore",
+			    "\texit $3;;",
 			"\tesac",
-			"done"
+			"$0"
 		]
 	},
-	"controllo se il file è leggibile e ha estensione": {
-		"prefix": "file read",
+	"ciclo di scorrimenti file della directory": {
+		"prefix": "for file",
 		"body": [
-			"for F in *; do",
-			"\tif test -f \"\\$F\" -a -r \"\\$F\"; then",
+			"for ${1:F} in *; do",
+			"\t#Seleziono solo i file leggibili",
+			"\tif test -f \"\\$${1:F}\" -a -r \"\\$${1:F}\"; then",
     		    "\t\t",
     		"\tfi",
-			"done"
+			"done",
+			"$0"
 		]
 	},
 	"controllo estensione del file": {
@@ -141,11 +140,12 @@
 		"prefix": "dir empty",
 		"body": [
 			"# Mi assicuro che la directory non sia vuota",
-			"if test \"`ls -A`\" = \"\"; then",
+			"if test -z \"`ls -A`\"; then",
 			    "\techo \"La directory \\$1 e' vuota. Directory scartata.\"",
 			    "\t# Esco con valore 0 perché cio' non e' un errore",
 			    "\texit 0",
-			"fi"
+			"fi",
+			"$0"
 		]
 	},
 	"file temporaneo": {
@@ -153,13 +153,13 @@
 		"body": [
 			"# Creo un file temporaneo",
 			"echo \"Creo un file temporaneo.\"",
-			"> /tmp/nomiAssoluti",
+			"> ${1:/tmp/nomiAssoluti}",
 			"",
-			"",
+			"$0",
 			"",
 			"# Elimino il file temporaneo",
 			"echo \"Elimino il file temporaneo.\"",
-			"rm /tmp/nomiAssoluti"
+			"rm ${1:/tmp/nomiAssoluti}"
 		]
 	},
 	"multipli file temporanei": {
@@ -239,17 +239,16 @@
 		]
 	},
 	"for": {
-		"prefix": "for",
+		"prefix": "for con iteratore",
 		"body": [
 			"# Dichiaro una variabile da usare come contatore",
 			"n=1",
 			"# Scorro la lista in un ciclo che utilizza il contatore n",
-			"for G; do",
+			"for ${1:i}; do",
 			    "\t# Incremento la variabile contatore di 1 a ogni iterazione",
+				"$0",
 			    "\tn=`expr \"\\$n\" + 1`",
-			"done",
-			"# Reimposto il contatore al punto di partenza, ovvero a 1",
-			"n=1"
+			"done"
 		]
 	},
 	"shift": {
@@ -291,7 +290,7 @@
 			"# Scorro la lista di gerarchie",
 			"for G in \\$Q; do",
 			    "\t# Chiamo lo script ricorsivo",
-			    "\tFCR.sh \"\\$G\" \"\\$\" \"/tmp/nomiAssoluti\"",
+			    "\tFCR.sh \"\\$G\" \"\\$\" \"${1:/tmp/nomiAssoluti}\"",
 			"done"
 		]
 	}
